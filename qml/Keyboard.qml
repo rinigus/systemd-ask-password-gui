@@ -121,7 +121,7 @@ Item {
                 delegate: Key {
                     height: keyHeight
                     width: keyWidth * modelData.width
-                    text: _symbols? modelData.symbol: _shift? modelData.text.toUpperCase():  modelData.text
+                    text: _symbols? modelData.symbol: _shift && modelData.width === 1 ? modelData.text.toUpperCase():  modelData.text
                     onClicked: kbd.process(text)
                 }
             }
