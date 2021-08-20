@@ -1,6 +1,7 @@
 #ifndef PASSWORDTASKLIST_H
 #define PASSWORDTASKLIST_H
 
+#include <QAbstractListModel>
 #include <QHash>
 #include <QObject>
 #include <QSet>
@@ -8,21 +9,45 @@
 
 #include "passwordtask.h"
 
-class PasswordTaskList : public QObject
+class PasswordTaskList : public QAbstractListModel
 {
   Q_OBJECT
-public:
-  explicit PasswordTaskList(QObject *parent = nullptr);
 
+  enum RoleNames { GetIdRole = Qt::UserRole + 1,
+                   TitleRole,
+                   DescriptionRole };
+
+
+private:
+  explicit PasswordTaskList();
+
+public:
   bool add(QString inifname);
   bool contains(QString inifname) const;
   void removeMissing(QSet<QString> current);
-  void remove(QString inifname);
+
+  Q_INVOKABLE PasswordTask* get(QString inifname);
+
+  // Model API
+  QHash<int, QByteArray> roleNames() const override;
+  QVariant data(const QModelIndex &index, int role) const override;
+  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 signals:
+  void passwordRemoved(QString passid);
+
+public: // static
+  static PasswordTaskList* instance();
+
+private:
+  void sort();
 
 private:
   QHash<QString, QSharedPointer<PasswordTask>> m_tasks;
+  QStringList m_tasks_sorted;
+
+private: // static
+  static PasswordTaskList *s_instance;
 };
 
 #endif // PASSWORDTASKLIST_H

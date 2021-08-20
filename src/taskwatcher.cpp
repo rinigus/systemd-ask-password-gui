@@ -1,4 +1,5 @@
 #include "taskwatcher.h"
+#include "passwordtasklist.h"
 
 #include <QDebug>
 #include <QDirIterator>
@@ -24,12 +25,12 @@ void TaskWatcher::onDirChanged(const QString &path)
     {
       QString next = dir.next();
 
-      if (!m_password_tasks.contains(next))
-        m_password_tasks.add(next);
+      if (!PasswordTaskList::instance()->contains(next))
+        PasswordTaskList::instance()->add(next);
 
       current.insert(next);
     }
 
-  m_password_tasks.removeMissing(current);
+  PasswordTaskList::instance()->removeMissing(current);
 }
 

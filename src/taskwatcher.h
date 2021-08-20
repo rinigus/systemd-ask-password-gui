@@ -7,8 +7,6 @@
 #include <QSet>
 #include <QString>
 
-#include "passwordtasklist.h"
-
 class TaskWatcher : public QObject
 {
   Q_OBJECT
@@ -24,8 +22,6 @@ protected:
 
 private:
   QFileSystemWatcher m_watcher;
-
-  PasswordTaskList m_password_tasks;
 };
 
 #endif // TASKWATCHER_H

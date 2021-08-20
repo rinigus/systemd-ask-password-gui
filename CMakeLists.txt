@@ -9,6 +9,8 @@ pkg_search_module(SAILFISH sailfishapp REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(REPLY_PASSWORD_CMD "/usr/lib/systemd/systemd-reply-password" CACHE STRING "Full path for systemd-reply-password")
+
 # sources
 
 ## QML sources: installed in subdir
@@ -29,6 +31,10 @@ add_custom_target(Sources SOURCES
     )
 
 # compilation
+add_compile_options(
+    -DREPLY_PASSWORD_CMD="${REPLY_PASSWORD_CMD}"
+)
+
 add_executable(systemd-ask-password-gui ${CXX_SRC} ${CXX_HEADERS})
 
 target_compile_definitions(systemd-ask-password-gui PRIVATE
@@ -54,19 +60,3 @@ install(DIRECTORY translations
     DESTINATION share/systemd-ask-password-gui
     FILES_MATCHING PATTERN "*.qm"
 )
-
-# Tell Qt Creator where the application executable(s) would be located on the
-# device.
-#
-# It is not necessary to list other deployables than executables (runtime
-# targets) here. The deployment process of Sailfish OS projects is opaque to
-# Qt Creator and the information contained in QtCreatorDeployment.txt is only
-# used to locate the executable associated with the active run configuration
-# on the device in order to run it.
-#
-# Search the Qt Creator Manual to learn about the QtCreatorDeployment.txt file
-# format.
-file(WRITE "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
-    "${CMAKE_INSTALL_PREFIX}
-${CMAKE_BINARY_DIR}/luks-unlock:bin
-")

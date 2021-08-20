@@ -1,4 +1,5 @@
 #include "passwordtask.h"
+#include "passwordtasklist.h"
 
 #include <QDebug>
 #include <QSettings>
@@ -26,11 +27,18 @@ PasswordTask::PasswordTask(QString inifname, QObject *parent) : QObject(parent)
   m_id = tini.value("Id", inifname).toString();
   m_ini = inifname;
 
+  int split = m_message.indexOf(QLatin1Char(':'));
+  m_title = m_message.left(split);
+  if (split > 0)
+    m_description = m_message.mid(split+1);
+
   qDebug() << "New task:" << m_pid << m_id << m_socket << m_echo << m_not_after << m_message << expired();
 }
 
 PasswordTask::~PasswordTask()
 {
+  emit removed();
+  PasswordTaskList::instance()->passwordRemoved(m_id);
   qDebug() << "Removing task:" << m_id << m_socket;
 }
 
@@ -61,3 +69,39 @@ double PasswordTask::dtExpiration() const
 
   return (m_not_after - now)*1e-6;
 }
+
+void PasswordTask::set(QString password)
+{
+  QStringList arguments;
+  arguments << "1" << m_socket;
+  m_process = new QProcess(this);
+
+  connect(m_process, &QProcess::started,
+          this, &PasswordTask::processStarted);
+  connect(m_process,
+          static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+          this, &PasswordTask::processCallback);
+  connect(m_process, &QProcess::errorOccurred,
+          this, &PasswordTask::processCallbackForError);
+
+  m_password = password.toLatin1();
+  m_process->start(REPLY_PASSWORD_CMD, arguments);
+}
+
+void PasswordTask::processStarted()
+{
+  m_process->write(m_password);
+  m_process->closeWriteChannel();
+  qDebug() << "Sending password";
+}
+
+void PasswordTask::processCallback(int exitCode, QProcess::ExitStatus /*exitStatus*/)
+{
+  qDebug() << m_id << "Set password completed with exit code" << exitCode;
+}
+
+void PasswordTask::processCallbackForError(QProcess::ProcessError error)
+{
+  qDebug() << m_id << "Set password error";
+}
+
