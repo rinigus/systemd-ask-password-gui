@@ -5,8 +5,11 @@
 #include <QGuiApplication>
 #include <QQmlEngine>
 #include <QQuickView>
+#include <QDebug>
 
 #include <sailfishapp.h>
+
+#include <signal.h>
 
 #include "taskwatcher.h"
 #include "passwordtasklist.h"
@@ -29,5 +32,12 @@ int main(int argc, char *argv[])
   v->setSource(SailfishApp::pathTo("qml/systemd-ask-password-gui.qml"));
   v->show();
 
-  return app->exec();
+  // register signal handlers
+  signal(SIGTERM, [](int /*sig*/){ qInfo("Quitting on SIGTERM"); qApp->quit(); });
+  signal(SIGINT, [](int /*sig*/){ qInfo("Quitting on SIGINT"); qApp->quit(); });
+  signal(SIGHUP, [](int /*sig*/){ qInfo("Quitting on SIGHUP"); qApp->quit(); });
+
+  int r = app->exec();
+  qInfo() << "Finishing with" << r;
+  return r;
 }
