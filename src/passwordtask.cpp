@@ -90,9 +90,9 @@ void PasswordTask::set(QString password)
 
 void PasswordTask::processStarted()
 {
+  qDebug() << "Sending password";
   m_process->write(m_password);
   m_process->closeWriteChannel();
-  qDebug() << "Sending password";
 }
 
 void PasswordTask::processCallback(int exitCode, QProcess::ExitStatus /*exitStatus*/)
