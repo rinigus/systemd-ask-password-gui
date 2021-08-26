@@ -91,6 +91,8 @@ void PasswordTask::set(QString password)
 void PasswordTask::processStarted()
 {
   qDebug() << "Sending password";
+  PasswordTaskList::instance()->passwordSent(m_id,
+                                             tr("Sent password: %1").arg(m_title));
   m_process->write(m_password);
   m_process->closeWriteChannel();
 }

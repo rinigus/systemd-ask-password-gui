@@ -34,7 +34,9 @@ public:
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 signals:
+  void newPassword(QString passid, QString title);
   void passwordRemoved(QString passid);
+  void passwordSent(QString passid, QString noticeText);
 
 public: // static
   static PasswordTaskList* instance();

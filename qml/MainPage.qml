@@ -75,10 +75,9 @@ Page {
 
         model: PasswordTaskList
 
-        ViewPlaceholder {
-            id: viewPlaceholder
-            enabled: listView.count == 0
-            hintText: qsTr("Booting")
+        BusyLabel {
+            text: qsTr("Booting")
+            running: listView.count == 0
         }
     }
 }

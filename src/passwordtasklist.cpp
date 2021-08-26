@@ -22,6 +22,7 @@ bool PasswordTaskList::add(QString inifname)
   if (!(*p)) return false;
   m_tasks[p->ini()] = p;
   sort();
+  newPassword(p->id(), p->title());
   return true;
 }
 
