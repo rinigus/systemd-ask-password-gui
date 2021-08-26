@@ -37,7 +37,5 @@ int main(int argc, char *argv[])
   signal(SIGINT, [](int /*sig*/){ qInfo("Quitting on SIGINT"); qApp->quit(); });
   signal(SIGHUP, [](int /*sig*/){ qInfo("Quitting on SIGHUP"); qApp->quit(); });
 
-  int r = app->exec();
-  qInfo() << "Finishing with" << r;
-  return r;
+  return app->exec();
 }
