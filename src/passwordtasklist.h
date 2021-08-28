@@ -34,7 +34,7 @@ public:
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 signals:
-  void newPassword(QString passid, QString title);
+  void passwordFailed(QString noticeText);
   void passwordRemoved(QString passid);
   void passwordSent(QString passid, QString noticeText);
 
@@ -42,11 +42,14 @@ public: // static
   static PasswordTaskList* instance();
 
 private:
+  void onPasswordSent(QString passid, QString noticeText);
   void sort();
+
 
 private:
   QHash<QString, QSharedPointer<PasswordTask>> m_tasks;
   QStringList m_tasks_sorted;
+  QSet<QString> m_tasks_sent;
 
 private: // static
   static PasswordTaskList *s_instance;

@@ -8,6 +8,7 @@ PasswordTaskList* PasswordTaskList::s_instance = nullptr;
 
 PasswordTaskList::PasswordTaskList()
 {
+  connect(this, &PasswordTaskList::passwordSent, this, &PasswordTaskList::onPasswordSent);
 }
 
 PasswordTaskList* PasswordTaskList::instance()
@@ -22,13 +23,22 @@ bool PasswordTaskList::add(QString inifname)
   if (!(*p)) return false;
   m_tasks[p->ini()] = p;
   sort();
-  newPassword(p->id(), p->title());
+
+  // check if password was sent earlier. if it was then
+  // consider it failed
+  if (m_tasks_sent.contains(p->id()))
+    emit passwordFailed(tr("Password failed: %1").arg(p->title()));
   return true;
 }
 
 bool PasswordTaskList::contains(QString inifname) const
 {
   return m_tasks.contains(inifname);
+}
+
+void PasswordTaskList::onPasswordSent(QString passid, QString /*noticeText*/)
+{
+  m_tasks_sent.insert(passid);
 }
 
 void PasswordTaskList::removeMissing(QSet<QString> current)

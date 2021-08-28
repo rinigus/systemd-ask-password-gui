@@ -10,21 +10,11 @@ ApplicationWindow
 
     NotificationBox {
         id: passwordSentNotice
-        property string passid
-    }
 
-    Connections {
-        target: PasswordTaskList
-        onNewPassword: {
-            if (passwordSentNotice.passid === passid) {
-                passwordSentNotice.show(qsTr("Wrong password: %1").arg(title),
-                                        3000);
-            }
-        }
-
-        onPasswordSent: {
-            passwordSentNotice.passid = passid;
-            passwordSentNotice.show(noticeText, 6000);
+        Connections {
+            target: PasswordTaskList
+            onPasswordFailed: passwordSentNotice.show(noticeText, 3000)
+            onPasswordSent: passwordSentNotice.show(noticeText, 5000)
         }
     }
 }
