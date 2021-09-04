@@ -76,7 +76,7 @@ Page {
         model: PasswordTaskList
 
         BusyLabel {
-            text: qsTr("Starting up")
+            text: qsTr("Starting, please wait")
             running: listView.count == 0
         }
     }
