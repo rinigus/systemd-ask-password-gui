@@ -10,6 +10,7 @@
 #include <sailfishapp.h>
 
 #include <signal.h>
+#include <systemd/sd-daemon.h>
 
 #include "taskwatcher.h"
 #include "passwordtasklist.h"
@@ -36,6 +37,9 @@ int main(int argc, char *argv[])
   signal(SIGTERM, [](int /*sig*/){ qInfo("Quitting on SIGTERM"); qApp->quit(); });
   signal(SIGINT, [](int /*sig*/){ qInfo("Quitting on SIGINT"); qApp->quit(); });
   signal(SIGHUP, [](int /*sig*/){ qInfo("Quitting on SIGHUP"); qApp->quit(); });
+
+  // signal to systemd that GUI is ready
+  sd_notify(0, "READY=1");
 
   return app->exec();
 }

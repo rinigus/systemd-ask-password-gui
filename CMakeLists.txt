@@ -5,6 +5,7 @@ find_package (Qt5 COMPONENTS Core Qml Gui Quick REQUIRED)
 
 include(FindPkgConfig)
 pkg_search_module(SAILFISH sailfishapp REQUIRED)
+pkg_search_module(SYSTEMD libsystemd REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,10 +44,12 @@ target_compile_definitions(systemd-ask-password-gui PRIVATE
 target_include_directories(systemd-ask-password-gui PRIVATE
     $<BUILD_INTERFACE:
     ${SAILFISH_INCLUDE_DIRS}
+    ${SYSTEMD_INCLUDE_DIRS}
 >)
 target_link_libraries(systemd-ask-password-gui
     Qt5::Quick
     ${SAILFISH_LDFLAGS}
+    ${SYSTEMD_LDFLAGS}
 )
 
 # installs
